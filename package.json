@@ -34,11 +34,6 @@
 		"@types/mocha": "^2.2.42"
 	},
 	"dependencies": {
-		"mustache": "^3.0.1",
-		"orga": "^1.1.1",
-		"orga-rehype": "^1.1.1",
-		"orga-unified": "^1.1.1",
-		"rehype": "^8.0.0",
-		"unified-stream": "^1.0.4"
+		"orga": "^1.1.1"
 	}
 }
