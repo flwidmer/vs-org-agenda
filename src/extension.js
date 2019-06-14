@@ -35,15 +35,46 @@ function activate(context) {
 		createWebview(view);
 		
 	});
-
 	context.subscriptions.push(disposable);
+
+	let disposable2 = vscode.commands.registerCommand('extension.vs-org-agenda.showAgenda', function () {
+		// The code you place here will be executed every time your command is executed
+
+		// Display a message box to the user
+
+		// var pathUri = vscode.Uri.file("c:/users/florian/git/notes/org/vmax.org");
+		// var test = pathUri.toString();
+		// var fileText = fs
+		// 	.readFileSync(pathUri.fsPath)
+		// 	.toString();
+
+
+		//TODO get agenda files from configuration
+		let content = vscode.window.activeTextEditor.document.getText();
+		
+		var ast = orga.parse(content);
+		
+		var stack = []
+		push(stack, ast.children);
+
+		//TODO visit the ast to select headlines with todo and schedule / deadline
+
+		//TODO sort by date
+
+		//TODO do html output
+		let view = traverse(stack, previewHandlers);
+		createWebview(view);
+		
+	});
+
+	context.subscriptions.push(disposable2);
 }
 
 function push(stack, items) {
 	Array.prototype.push.apply(stack, items);
 }
 
-var handlers = { 
+var previewHandlers = { 
 	"section": function () {
 		let output = "<div class='section'>";
 		output += traverse(this.children);
@@ -136,7 +167,7 @@ function simpleOutput(tag, node) {
 		return output;
 }
 
-function traverse(list) {
+function traverse(list, handlers) {
 	let output = "";
 	var i;
 	for (i = 0; i < list.length; i++) {
@@ -149,7 +180,7 @@ function traverse(list) {
 }
 
 /**
- * This funciton will have to be removed and the content externalised in a file.
+ * This function will have to be removed and the content externalised in a file.
  * The file will need to be configurable.
  */
 function createHeader() {
