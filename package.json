@@ -1,0 +1,44 @@
+{
+	"name": "vs-org-agenda",
+	"displayName": "vs-org-agenda",
+	"description": "Agenda support for org mode files",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.35.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:extension.vs-org-agenda.showCurrentfile"
+	],
+	"main": "./src/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.vs-org-agenda.showCurrentfile",
+				"title": "org-agenda: Show current org file",
+				"enablement": "resourceExtname == .org"
+			}
+		]
+	},
+	"scripts": {
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28",
+		"eslint": "^5.13.0",
+		"@types/node": "^10.12.21",
+		"@types/mocha": "^2.2.42"
+	},
+	"dependencies": {
+		"mustache": "^3.0.1",
+		"orga": "^1.1.1",
+		"orga-rehype": "^1.1.1",
+		"orga-unified": "^1.1.1",
+		"rehype": "^8.0.0",
+		"unified-stream": "^1.0.4"
+	}
+}
