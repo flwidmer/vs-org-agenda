@@ -77,10 +77,7 @@ var handlers = {
 		return "<span>" + this.value + traverse(this.children)+ "</span>";
 	},
 	"paragraph": function() {
-		let output = "<p>";
-		output += traverse(this.children);
-		output += "</p>";
-		return output;
+		return simpleOutput("p", this);
 	},
 	"planning": function() {
 		let output = "<p class='planning ";
@@ -116,24 +113,28 @@ var handlers = {
 		return output;
 	},
 	"table": function() {
-		let output ="<table>";
-		output += traverse(this.children);
-		output += "</table>";
-		return output;
+		return simpleOutput("table", this);
 	},
 	"table.row": function() {
-		let output ="<tr>";
-		output += traverse(this.children);
-		output += "</tr>";
-		return output;
+		return simpleOutput("tr", this);
 	}, 
 	"table.cell": function() {
-		let output ="<td>";
-		output += traverse(this.children);
-		output += "</td>";
-		return output;
+		return simpleOutput("td", this);
+	},
+	"bold": function() {
+		return simpleOutput("b", this);
+	},
+	"italic": function() {
+		return simpleOutput("i", this);
 	}
 };
+
+function simpleOutput(tag, node) {
+	let output ="<"+ tag +">";
+		output += traverse(node.children);
+		output += "</"+tag+">";
+		return output;
+}
 
 function traverse(list) {
 	let output = "";

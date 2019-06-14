@@ -3,6 +3,7 @@
 	"displayName": "vs-org-agenda",
 	"description": "Agenda support for org mode files",
 	"version": "0.0.1",
+	"publisher": "Florian Widmer",
 	"engines": {
 		"vscode": "^1.35.0"
 	},
