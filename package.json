@@ -2,7 +2,7 @@
 	"name": "vs-org-agenda",
 	"displayName": "vs-org-agenda",
 	"description": "Agenda support for org mode files",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"publisher": "Florian Widmer",
 	"engines": {
 		"vscode": "^1.35.0"
@@ -23,7 +23,6 @@
 				"enablement": "resourceExtname == .org"
 			},
 			{
-				
 				"command": "extension.vs-org-agenda.showAgenda",
 				"title": "org-agenda: Show agenda",
 				"enablement": "resourceExtname == .org"
