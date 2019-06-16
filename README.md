@@ -1,6 +1,6 @@
 # vs-org-agenda README
 
-This is the README for your extension "vs-org-agenda". After writing up a brief description, we recommend including the following sections.
+Org Agenda funcitonality. Very much under development, highly experimental.
 
 ## Features
 
