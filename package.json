@@ -11,7 +11,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.vs-org-agenda.showCurrentfile"
+		"onCommand:extension.vs-org-agenda.showCurrentfile",
+		"onCommand:extension.vs-org-agenda.showAgenda"
 	],
 	"main": "./src/extension.js",
 	"contributes": {
@@ -19,6 +20,12 @@
 			{
 				"command": "extension.vs-org-agenda.showCurrentfile",
 				"title": "org-agenda: Show current org file",
+				"enablement": "resourceExtname == .org"
+			},
+			{
+				
+				"command": "extension.vs-org-agenda.showAgenda",
+				"title": "org-agenda: Show agenda",
 				"enablement": "resourceExtname == .org"
 			}
 		]
@@ -35,7 +42,8 @@
 		"@types/mocha": "^2.2.42"
 	},
 	"dependencies": {
-		"orga": "^1.1.1",
-		"diff": ">=3.5.0"
+		"diff": ">=3.5.0",
+		"moment": "^2.24.0",
+		"orga": "^1.1.1"
 	}
 }
