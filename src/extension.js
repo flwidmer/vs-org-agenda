@@ -61,13 +61,12 @@ function activate(context) {
 		var scheduled = [];
 		var deadline = [];
 		var appointements = [];
-		//TODO visit the ast to select headlines with todo and schedule / deadline
 		var dateRegex = /\d{4}-\d{1,2}-\d{1,2}/
 		let dates ={};
 		let dateList = [];
 		for(i=0; i < headlines.length; i++) {
 			let current = headlines[i];
-			if(current.keyword == "CLOSED" || current.keyword == "CANCELLED") {
+			if(current.keyword == "DONE" || current.keyword == "CANCELLED") {
 				continue;
 			}
 			let pl = current.children.filter(e => e.type =="planning");
@@ -78,14 +77,21 @@ function activate(context) {
 			let planningItem = pl[0];
 			if(planningItem.keyword == "DEADLINE") {
 				deadline.push(current);
-				
 			} else if (planningItem.keyword == "SCHEDULED") {
 				scheduled.push(current);
+				//TODO if date is in past, move to today
 			}
 			current.planning = planningItem.keyword;
 			let d = dateRegex.exec(planningItem.timestamp);
 			current.date = moment(d[0]);
-			
+			if(current.planning == "SCHEDULED" && current.date.isBefore(today())){
+				current.date = moment().startOf("day");
+			}
+
+			if(current.planning == "DEADLINE" && current.date.isBefore(today())){
+				current.color = "red";
+				current.date = moment().startOf("day");
+			}
 			if(dates[current.date]) {
 				dates[current.date].push(current);
 			} else {
@@ -100,7 +106,7 @@ function activate(context) {
 		//TODO do html output
 		let view = "";
 		for(i = 0; i < dateList.length; i++) {
-			view += "<h1>"+ dateList[i].format("dddd dd.MM.YYYY") + "</h1>";
+			view += "<h1>"+ dateList[i].format("dddd DD.MM.YYYY") + "</h1>";
 			view += "<ul>";
 			view += traverseSchedule(dates[dateList[i]]);
 			view += "</ul>";
@@ -110,6 +116,10 @@ function activate(context) {
 	});
 
 	context.subscriptions.push(disposable2);
+}
+
+function today() {
+	return moment().startOf("day");
 }
 
 function push(stack, items) {
@@ -127,6 +137,7 @@ var previewHandlers = {
 		let output =  ""; 
 		output += "<h" + this.level;
 		output += " class='";
+		
 		if(this.keyword) {
 			 output += " " + this.keyword + " ";
 		} 
@@ -222,7 +233,13 @@ var scheduleHandlers = {
 			output += this.keyword;
 			output += "</span>";
 		}
+		if (this.color =="red") {
+			output += "<span class='highlight-red'> ";
+		}
 		output += traversePreview(this.children.filter(node => node.type==="text"));
+		if (this.color =="red") {
+			output += " </span> ";
+		}
 		output += "</li>";
 		output += traversePreview(this.children.filter(node => node.type!=="text"));
 		return output;
@@ -333,6 +350,9 @@ function filterHeadlines(headlines, list) {
 function createHeader() {
 	return `<style>
 
+	span.highlight-red {
+		color: red;
+	}
 
 	span.todo{
 		background-color: #f29f97;
