@@ -79,7 +79,7 @@ function activate(context) {
 				deadline.push(current);
 			} else if (planningItem.keyword == "SCHEDULED") {
 				scheduled.push(current);
-				//TODO if date is in past, move to today
+			
 			}
 			current.planning = planningItem.keyword;
 			let d = dateRegex.exec(planningItem.timestamp);
@@ -87,7 +87,9 @@ function activate(context) {
 			if(current.planning == "SCHEDULED" && current.date.isBefore(today())){
 				current.date = moment().startOf("day");
 			}
-
+			if(current.planning == "DEADLINE" && current.date.isBefore(today().add(2, "days"))){
+				current.color = "orange";
+			}
 			if(current.planning == "DEADLINE" && current.date.isBefore(today())){
 				current.color = "red";
 				current.date = moment().startOf("day");
@@ -101,7 +103,7 @@ function activate(context) {
 		}
 
 		//TODO sort by date
-		dateList.sort();
+		dateList.sort((a,b) => a.format('YYYYMMDD') - b.format('YYYYMMDD'))
 
 		//TODO do html output
 		let view = "";
@@ -233,8 +235,8 @@ var scheduleHandlers = {
 			output += this.keyword;
 			output += "</span>";
 		}
-		if (this.color =="red") {
-			output += "<span class='highlight-red'> ";
+		if (this.color) {
+			output += "<span class='highlight-"+this.color+"'> ";
 		}
 		output += traversePreview(this.children.filter(node => node.type==="text"));
 		if (this.color =="red") {
@@ -352,6 +354,10 @@ function createHeader() {
 
 	span.highlight-red {
 		color: red;
+	}
+
+	span.highlight-orange {
+		color: orange;
 	}
 
 	span.todo{
