@@ -1,0 +1,10 @@
+Vs-org-agenda
+
+* Roadmap
+** TODO Configurable files
+** TODO Parse several dates
+** TODO Archiving
+** TODO Configurable durations
+** TODO Live update
+** TODO Reload of file into same tab
+** TODO Keystroke proposals
