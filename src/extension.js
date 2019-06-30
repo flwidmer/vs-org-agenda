@@ -1,3 +1,11 @@
+import {traversePreview} from "./preview.js";
+import {traverseSchedule, filterHeadlines} from "./agenda.js";
+import {createHeader} from "./common.js";
+
+export{activate, deactivate};
+
+
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
@@ -5,6 +13,9 @@ const fs = require("fs");
 const path = require("path");
 const orga = require("orga");
 const moment = require("moment");
+
+
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
@@ -128,318 +139,6 @@ function push(stack, items) {
 	Array.prototype.push.apply(stack, items);
 }
 
-var previewHandlers = { 
-	"section": function () {
-		let output = "<div class='section'>";
-		output += traversePreview(this.children);
-		output += "</div>";
-		return output;
-	},
-	"headline": function () {
-		let output =  ""; 
-		output += "<h" + this.level;
-		output += " class='";
-		
-		if(this.keyword) {
-			 output += " " + this.keyword + " ";
-		} 
-		if(this.priority) {
-			output += " " + this.priority + " ";
-	   	} 
-		output += "'>";
-		if(this.keyword) {
-			output += "<span class='keyword " + this.keyword.toLowerCase() + "'>";
-			output += this.keyword;
-			output += "</span>";
-		}
-		output += traversePreview(this.children.filter(node => node.type==="text"));
-		output += "</h" + this.level + ">";
-		output += "<div class='headline-properties level" +this.level +"'>"; 
-		output += traversePreview(this.children.filter(node => node.type!=="text"));
-		output += "</div>";
-		return output;
-	} ,
-	"text": function() {
-		return "<span>" + this.value + traversePreview(this.children)+ "</span>";
-	},
-	"paragraph": function() {
-		return simpleOutput("p", this);
-	},
-	"planning": function() {
-		let output = "<p class='planning ";
-		output += " "+ this.keyword.toLowerCase()+"'>";
-		output += "<span class='keyword>"+this.keyword + "</span><span class='timestamp'>" + this.timestamp;
-		output += "</span></p>"
-		return output;
-	},
-	"list": function() {
-		let output ="<div class='list'>";
-		if(this.ordered) {
-			output += "<ol>";
-		}else {
-			output += "<ul>";
-		}
-		output += traversePreview(this.children);
-		if(this.ordered) {
-			output += "</ol>";
-		}else {
-			output += "</ul>";
-		}
-		return output;
-	},
-	"list.item": function() {
-		let output ="<li>";
-		if(this.checked) {
-			output+="<input checked  type='checkbox' />";
-		} else if (this.checked === false) {
-			output+="<input  type='checkbox' />";
-		}
-		output += traversePreview(this.children);
-		output += "</li>";
-		return output;
-	},
-	"table": function() {
-		return simpleOutput("table", this);
-	},
-	"table.row": function() {
-		return simpleOutput("tr", this);
-	}, 
-	"table.cell": function() {
-		return simpleOutput("td", this);
-	},
-	"bold": function() {
-		return simpleOutput("b", this);
-	},
-	"italic": function() {
-		return simpleOutput("i", this);
-	}
-	//TODO include the rest of the nodes of the AST
-	//TODO move this to its own module
-};
-
-var scheduleHandlers = { 
-	"section": function () {
-		let output = "<div class='section'>";
-		output += traversePreview(this.children);
-		output += "</div>";
-		return output;
-	},
-	"headline": function () {
-		let output =  ""; 
-		output += "<li>"
-		if(this.priority) {
-			output += " " + this.priority + " ";
-	   	} 
-		if(this.keyword) {
-			output += "<span class='keyword " + this.keyword.toLowerCase() + "'>";
-			output += this.keyword;
-			output += "</span>";
-		}
-		if (this.color) {
-			output += "<span class='highlight-"+this.color+"'> ";
-		}
-		output += traversePreview(this.children.filter(node => node.type==="text"));
-		if (this.color =="red") {
-			output += " </span> ";
-		}
-		output += "</li>";
-		output += traversePreview(this.children.filter(node => node.type!=="text"));
-		return output;
-	} ,
-	"text": function() {
-		return "<span>" + this.value + traversePreview(this.children)+ "</span>";
-	},
-	"paragraph": function() {
-		return simpleOutput("p", this);
-	},
-	"planning": function() {
-		let output = "<p class='planning ";
-		output += " "+ this.keyword.toLowerCase()+"'>";
-		output += "<span class='keyword>"+this.keyword + "</span><span class='timestamp'>" + this.timestamp;
-		output += "</span></p>"
-		return output;
-	},
-	"list": function() {
-		let output ="<div class='list'>";
-		if(this.ordered) {
-			output += "<ol>";
-		}else {
-			output += "<ul>";
-		}
-		output += traversePreview(this.children);
-		if(this.ordered) {
-			output += "</ol>";
-		}else {
-			output += "</ul>";
-		}
-		return output;
-	},
-	"list.item": function() {
-		let output ="<li>";
-		if(this.checked) {
-			output+="<input checked  type='checkbox' />";
-		} else if (this.checked === false) {
-			output+="<input  type='checkbox' />";
-		}
-		output += traversePreview(this.children);
-		output += "</li>";
-		return output;
-	},
-	"table": function() {
-		return simpleOutput("table", this);
-	},
-	"table.row": function() {
-		return simpleOutput("tr", this);
-	}, 
-	"table.cell": function() {
-		return simpleOutput("td", this);
-	},
-	"bold": function() {
-		return simpleOutput("b", this);
-	},
-	"italic": function() {
-		return simpleOutput("i", this);
-	}
-	//TODO include the rest of the nodes of the AST
-	//TODO move this to its own module
-};
-
-function simpleOutput(tag, node) {
-	let output ="<"+ tag +">";
-		output += traversePreview(node.children);
-		output += "</"+tag+">";
-		return output;
-}
-
-function traversePreview(list) {
-	let output = "";
-	var i;
-	for (i = 0; i < list.length; i++) {
-		let node = list[i];
-		if(previewHandlers[node.type]) {
-			output += previewHandlers[node.type].call(node);
-		}
-	};
-	return output;
-}
-
-function traverseSchedule(list) {
-	let output = "";
-	var i;
-	for (i = 0; i < list.length; i++) {
-		let node = list[i];
-		if(scheduleHandlers[node.type]) {
-			output += scheduleHandlers[node.type].call(node);
-		}
-	};
-	return output;
-}
-
-function filterHeadlines(headlines, list) {
-	var i;
-	for (i = 0; i < list.length; i++) {
-		if(list[i].type=="headline") {
-			headlines.push(list[i]);
-		}
-		filterHeadlines(headlines,list[i].children);
-	};
-}
-
-/**
- * This function will have to be removed and the content externalised in a file.
- * The file will need to be configurable.
- */
-function createHeader() {
-	return `<style>
-
-	span.highlight-red {
-		color: red;
-	}
-
-	span.highlight-orange {
-		color: orange;
-	}
-
-	span.todo{
-		background-color: #f29f97;
-		padding: 0px 4px;
-		color: #fff;
-	}
-	
-	span.wait, span.project {
-		background-color: #6AB097;
-	}
-	
-	span.done, span.cancelled {
-		background-color: #6ab0de;
-		padding: 0px 4px;
-		color: #fff;
-	}
-	
-	.keyword {
-	  margin-right: 10px;
-	}
-	
-	.section-number {
-	  display: none;
-	}
-	
-	span.tag {
-		background-color: #EDEDED;
-		border: 1px solid #EDEDED;
-		color: #939393;
-		cursor: pointer;
-		display: block;
-		float: right;
-		font-size: 80%;
-		font-weight: normal;
-		margin: 0 3px;
-		padding: 1px 2px;
-		border-radius: 10px;
-	}
-	
-	table{
-		border-collapse:collapse;
-		border-spacing:0;
-		empty-cells:show;
-		margin-bottom:24px;
-		border-bottom:1px solid #e1e4e5;
-	}
-	
-	td{
-		vertical-align:top}
-	
-	table td,table th{
-		font-size:90%;
-		margin:0;
-		overflow:visible;
-		padding:8px 16px;
-		border:1px solid #e1e4e5;
-	}
-	
-	table thead th{
-		font-weight:bold;
-		border-top:3px solid #e1e4e5;
-		border-bottom:1px solid #e1e4e5;
-	}
-	
-	table caption{
-		color:#000;
-		font:italic 85%/1 arial,sans-serif;
-		padding:1em 0;
-	}
-	
-	table tr:nth-child(2n-1) td{
-		
-	}
-	
-	table tr:nth-child(2n) td{
-		
-	}
-	
-	</style>`;
-}
-
 function createWebview(input) {
 
 	// let reload = false;
@@ -532,15 +231,11 @@ function createWebview(input) {
 
   }
 
-
-
-
-exports.activate = activate;
-
 // this method is called when your extension is deactivated
 function deactivate() {}
 
-module.exports = {
-	activate,
-	deactivate
-}
+
+
+
+
+

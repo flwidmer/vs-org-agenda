@@ -14,7 +14,7 @@
 		"onCommand:extension.vs-org-agenda.showCurrentfile",
 		"onCommand:extension.vs-org-agenda.showAgenda"
 	],
-	"main": "./src/extension.js",
+	"main": "./dist/extension",
 	"contributes": {
 		"commands": [
 			{
@@ -30,15 +30,20 @@
 		]
 	},
 	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"test-compile": "tsc -p ./",
+		"lint": "eslint -p ./"
 	},
 	"devDependencies": {
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^10.12.21",
+		"eslint": "^5.13.0",
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28",
-		"eslint": "^5.13.0",
-		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"webpack": "^4.35.0",
+		"webpack-cli": "^3.3.4"
 	},
 	"dependencies": {
 		"diff": ">=3.5.0",

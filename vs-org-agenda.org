@@ -8,3 +8,13 @@ Vs-org-agenda
 ** TODO Live update
 ** TODO Reload of file into same tab
 ** TODO Keystroke proposals
+** TODO Better titles
+** DONE refactoring into modules
+
+* Backlog
+** Better CSS
+** Something better than webview
+** Tests 
+** webview with foldable?
+** Tables with sums
+Maybe better in separate ext.
