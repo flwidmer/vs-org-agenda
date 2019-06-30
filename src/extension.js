@@ -44,7 +44,7 @@ function activate(context) {
 		var stack = []
 		push(stack, ast.children);
 		let view = traversePreview(stack);
-		createWebview(view);
+		createWebview(view, "preview", "Org file preview");
 		
 	});
 	context.subscriptions.push(disposable);
@@ -124,7 +124,7 @@ function activate(context) {
 			view += traverseSchedule(dates[dateList[i]]);
 			view += "</ul>";
 		}
-		createWebview(view);
+		createWebview(view, "agenda", "Agenda view");
 		
 	});
 
@@ -139,12 +139,12 @@ function push(stack, items) {
 	Array.prototype.push.apply(stack, items);
 }
 
-function createWebview(input) {
+function createWebview(input, id, title) {
 
 	// let reload = false;
 	var fullAgendaView = vscode.window.createWebviewPanel(
-	  "fullAgenda",
-	  "Full Agenda View",
+	  id,
+	  title,
 	  vscode.ViewColumn.Beside,
 	  {
 		// Enable scripts in the webview
