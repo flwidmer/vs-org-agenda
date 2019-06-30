@@ -1,11 +1,4 @@
-export {traversePreview, simpleOutput};
-
-function simpleOutput(tag, node) {
-	let output ="<"+ tag +">";
-		output += traversePreview(node.children);
-		output += "</"+tag+">";
-		return output;
-}
+export {traversePreview};
 
 function traversePreview(list) {
 	let output = "";
@@ -22,89 +15,64 @@ function traversePreview(list) {
 
 var previewHandlers = { 
 	"section": function () {
-		let output = "<div class='section'>";
-		output += traversePreview(this.children);
-		output += "</div>";
-		return output;
+		return `
+			<div class='section'>
+				${traversePreview(this.children)}
+			</div>`;
 	},
 	"headline": function () {
-		let output =  ""; 
-		output += "<h" + this.level;
-		output += " class='";
-		
-		if(this.keyword) {
-			 output += " " + this.keyword + " ";
-		} 
-		if(this.priority) {
-			output += " " + this.priority + " ";
-	   	} 
-		output += "'>";
-		if(this.keyword) {
-			output += "<span class='keyword " + this.keyword.toLowerCase() + "'>";
-			output += this.keyword;
-			output += "</span>";
-		}
-		output += traversePreview(this.children.filter(node => node.type==="text"));
-		output += "</h" + this.level + ">";
-		output += "<div class='headline-properties level" +this.level +"'>"; 
-		output += traversePreview(this.children.filter(node => node.type!=="text"));
-		output += "</div>";
-		return output;
+		return `
+			<h${this.level} class='${this.keyword?this.keyword:""} ${this.priority?this.priority:""}'>
+				${this.keyword?`<span class='keyword ${this.keyword.toLowerCase()}'>${this.keyword}</span>`:""}
+				${traversePreview(this.children.filter(node => node.type==="text"))}
+			</h${this.level}>
+			<div class='headline-properties level${this.level}'> 
+				${traversePreview(this.children.filter(node => node.type!=="text"))}
+			</div>`;
 	} ,
 	"text": function() {
-		return "<span>" + this.value + traversePreview(this.children)+ "</span>";
+		return `
+			<span>${this.value}${traversePreview(this.children)}</span>`;
 	},
 	"paragraph": function() {
-		return simpleOutput("p", this);
+		return `
+			<p>${traversePreview(this.children)}</p>`;
 	},
 	"planning": function() {
-		let output = "<p class='planning ";
-		output += " "+ this.keyword.toLowerCase()+"'>";
-		output += "<span class='keyword>"+this.keyword + "</span><span class='timestamp'>" + this.timestamp;
-		output += "</span></p>"
-		return output;
+		return `
+			<p class='planning ${this.keyword.toLowerCase()}'>
+				<span class='keyword>${this.keyword}</span><span class='timestamp'>${this.timestamp}</span>
+			</p>`;
 	},
 	"list": function() {
-		let output ="<div class='list'>";
-		if(this.ordered) {
-			output += "<ol>";
-		}else {
-			output += "<ul>";
-		}
-		output += traversePreview(this.children);
-		if(this.ordered) {
-			output += "</ol>";
-		}else {
-			output += "</ul>";
-		}
-		return output;
+		return `
+			<div class='list'>
+			${this.ordered?"<ol>":"<ul>"}
+				${traversePreview(this.children)}
+			${this.ordered?"</ol>":"</ul>"}
+			</div>`;
 	},
 	"list.item": function() {
-		let output ="<li>";
-		if(this.checked) {
-			output+="<input checked  type='checkbox' />";
-		} else if (this.checked === false) {
-			output+="<input  type='checkbox' />";
-		}
-		output += traversePreview(this.children);
-		output += "</li>";
-		return output;
+		return `
+			<li>
+				${(this.checked != undefined)?`<input type='checkbox' ${this.checked?"checked":""} />`:""}
+				${traversePreview(this.children)}
+			</li>`;
 	},
 	"table": function() {
-		return simpleOutput("table", this);
+		return `<table>${traversePreview(this.children)}</table>`;
 	},
 	"table.row": function() {
-		return simpleOutput("tr", this);
+		return `<tr>${traversePreview(this.children)}</tr>`;
 	}, 
 	"table.cell": function() {
-		return simpleOutput("td", this);
+		return `<td>${traversePreview(this.children)}</td>`;
 	},
 	"bold": function() {
-		return simpleOutput("b", this);
+		return `<b>${traversePreview(this.children)}</b>`;
 	},
 	"italic": function() {
-		return simpleOutput("i", this);
+		return `<i>${traversePreview(this.children)}</i>`;
 	}
 	//TODO include the rest of the nodes of the AST
-	//TODO move this to its own module
 };
