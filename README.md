@@ -1,6 +1,6 @@
 # vs-org-agenda README
 
-Org Agenda funcitonality. Very much under development, highly experimental.
+Org Agenda functionality. Very much under development, highly experimental.
 
 ## Features
 
