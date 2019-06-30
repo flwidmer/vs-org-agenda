@@ -9,6 +9,7 @@ Vs-org-agenda
 ** TODO Reload of file into same tab
 ** TODO Keystroke proposals
 ** TODO Better titles
+** TODO use template strings for output generation
 ** DONE refactoring into modules
 
 * Backlog
