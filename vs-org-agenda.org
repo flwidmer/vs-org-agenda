@@ -1,7 +1,7 @@
 Vs-org-agenda
 
 * Roadmap
-** TODO Configurable files
+** DONE Configurable files
 ** TODO Parse several dates
 ** TODO Archiving
 ** TODO insert keyword and timestamp with keystroke

@@ -12,7 +12,9 @@
 	],
 	"activationEvents": [
 		"onCommand:extension.vs-org-agenda.showCurrentfile",
-		"onCommand:extension.vs-org-agenda.showAgenda"
+		"onCommand:extension.vs-org-agenda.showAgenda",
+		"onCommand:extension.vs-org-agenda.showAgendaThisFile",
+		"onCommand:extension.vs-org-agenda.addToAgenda"
 	],
 	"main": "./dist/extension",
 	"contributes": {
@@ -24,10 +26,29 @@
 			},
 			{
 				"command": "extension.vs-org-agenda.showAgenda",
-				"title": "org-agenda: Show agenda",
+				"title": "org-agenda: Show agenda"
+			},
+			{
+				"command": "extension.vs-org-agenda.showAgendaThisFile",
+				"title": "org-agenda: Show agenda of current file",
+				"enablement": "resourceExtname == .org"
+			},
+			{
+				"command": "extension.vs-org-agenda.addToAgenda",
+				"title": "org-agenda: Add current file to agenda files list",
 				"enablement": "resourceExtname == .org"
 			}
-		]
+		],
+		"configuration": {
+			"title": "org-agenda",
+			"properties": {
+				"org-agenda.agendaFiles": {
+					"type": "array",
+					"default": [],
+					"description": "List of files to use for agenda. Typically you want this per workspace"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",

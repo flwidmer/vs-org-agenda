@@ -1,5 +1,5 @@
 import {traversePreview} from "./preview.js";
-import {traverseSchedule, filterHeadlines} from "./agenda.js";
+import {createAgendaView, filterHeadlines} from "./agenda.js";
 import {createHeader} from "./common.js";
 
 export{activate, deactivate};
@@ -12,7 +12,7 @@ const vscode = require('vscode');
 const fs = require("fs");
 const path = require("path");
 const orga = require("orga");
-const moment = require("moment");
+
 
 
 
@@ -49,18 +49,29 @@ function activate(context) {
 	});
 	context.subscriptions.push(disposable);
 
-	let disposable2 = vscode.commands.registerCommand('extension.vs-org-agenda.showAgenda', function () {
-		// The code you place here will be executed every time your command is executed
+	let showAgendaCommand = vscode.commands.registerCommand('extension.vs-org-agenda.showAgenda', function () {
+		//TODO get agenda files from configuration
+		let config = vscode.workspace.getConfiguration("org-agenda")
+		let files = config.agendaFiles;
+		var headlines = []
+		for (let i =  0; i < files.length; i++) {
+			let pathUri = vscode.Uri.file(files[i]);
+			let fileText = fs
+				.readFileSync(pathUri.fsPath)
+			 	.toString();
+			let content = fileText.replace(/\r/g,"");
+			var ast = orga.parse(content);
+			filterHeadlines(headlines, ast.children);
+		}
+		
+		let view = createAgendaView(headlines);
+		createWebview(view, "agenda", "Agenda view");
+		
+	});
 
-		// Display a message box to the user
+	context.subscriptions.push(showAgendaCommand);
 
-		// var pathUri = vscode.Uri.file("c:/users/florian/git/notes/org/vmax.org");
-		// var test = pathUri.toString();
-		// var fileText = fs
-		// 	.readFileSync(pathUri.fsPath)
-		// 	.toString();
-
-
+	let showAgendaThisFile = vscode.commands.registerCommand('extension.vs-org-agenda.showAgendaThisFile', function () {
 		//TODO get agenda files from configuration
 		let content = vscode.window.activeTextEditor.document.getText();
 		content = content.replace(/\r/g,"");
@@ -68,72 +79,27 @@ function activate(context) {
 		
 		var headlines = []
 		filterHeadlines(headlines, ast.children);
-		var i;
-		var scheduled = [];
-		var deadline = [];
-		var appointements = [];
-		var dateRegex = /\d{4}-\d{1,2}-\d{1,2}/
-		let dates ={};
-		let dateList = [];
-		for(i=0; i < headlines.length; i++) {
-			let current = headlines[i];
-			if(current.keyword == "DONE" || current.keyword == "CANCELLED") {
-				continue;
-			}
-			let pl = current.children.filter(e => e.type =="planning");
-			if(pl.length == 0)  {
-				continue;
-			}
-			//TODO replicate items as necessary to accommodate several of them,
-			let planningItem = pl[0];
-			if(planningItem.keyword == "DEADLINE") {
-				deadline.push(current);
-			} else if (planningItem.keyword == "SCHEDULED") {
-				scheduled.push(current);
-			
-			}
-			current.planning = planningItem.keyword;
-			let d = dateRegex.exec(planningItem.timestamp);
-			current.date = moment(d[0]);
-			if(current.planning == "SCHEDULED" && current.date.isBefore(today())){
-				current.date = moment().startOf("day");
-			}
-			if(current.planning == "DEADLINE" && current.date.isBefore(today().add(2, "days"))){
-				current.color = "orange";
-			}
-			if(current.planning == "DEADLINE" && current.date.isBefore(today())){
-				current.color = "red";
-				current.date = moment().startOf("day");
-			}
-			if(dates[current.date]) {
-				dates[current.date].push(current);
-			} else {
-				dates[current.date] = [current];
-				dateList.push(current.date);
-			}
-		}
-
-		//TODO sort by date
-		dateList.sort((a,b) => a.format('YYYYMMDD') - b.format('YYYYMMDD'))
-
-		//TODO do html output
-		let view = "";
-		for(i = 0; i < dateList.length; i++) {
-			view += "<h1>"+ dateList[i].format("dddd DD.MM.YYYY") + "</h1>";
-			view += "<ul>";
-			view += traverseSchedule(dates[dateList[i]]);
-			view += "</ul>";
-		}
+		let view = createAgendaView(headlines);
 		createWebview(view, "agenda", "Agenda view");
 		
 	});
 
-	context.subscriptions.push(disposable2);
+	context.subscriptions.push(showAgendaThisFile);
+
+	let addFileToAgenda = vscode.commands.registerCommand('extension.vs-org-agenda.addToAgenda', function () {
+		//TODO get agenda files from configuration
+		let config = vscode.workspace.getConfiguration("org-agenda")
+		let files = config.agendaFiles;
+		let fileName = vscode.window.activeTextEditor.document.fileName.replace(/\\/g,"/");
+		if(!files.includes(fileName)) {
+			files.push(fileName);
+			vscode.workspace.getConfiguration().update("org-agenda.agendaFiles", files, vscode.ConfigurationTarget.Global);
+		}
+	});
+
+	context.subscriptions.push(addFileToAgenda);
 }
 
-function today() {
-	return moment().startOf("day");
-}
 
 function push(stack, items) {
 	Array.prototype.push.apply(stack, items);
