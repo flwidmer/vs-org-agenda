@@ -1,8 +1,6 @@
 import {traversePreview} from "./preview.js";
 import {createAgendaView, filterHeadlines} from "./agenda.js";
 import {createHeader} from "./common.js";
-import {getCursorPosition,getActiveTextEditor,getLine} from "./utils.js";
-import { timestamp, parseHumanInput } from "./dateutil.js";
 import { insertWithTimestamp } from "./insertion.js";
 
 export{activate, deactivate};
@@ -13,7 +11,6 @@ export{activate, deactivate};
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const fs = require("fs");
-const path = require("path");
 const orga = require("orga");
 
 
