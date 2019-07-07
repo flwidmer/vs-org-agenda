@@ -1,6 +1,9 @@
 import {traversePreview} from "./preview.js";
 import {createAgendaView, filterHeadlines} from "./agenda.js";
 import {createHeader} from "./common.js";
+import {getCursorPosition,getActiveTextEditor,getLine} from "./utils.js";
+import { timestamp, parseHumanInput } from "./dateutil.js";
+import { insertWithTimestamp } from "./insertion.js";
 
 export{activate, deactivate};
 
@@ -26,7 +29,7 @@ function activate(context) {
 	/**
 	 * Open webview with current resource
 	 */
-	let disposable = vscode.commands.registerCommand('extension.vs-org-agenda.showCurrentfile', function () {
+	let previewFile = vscode.commands.registerCommand('extension.vs-org-agenda.showCurrentfile', function () {
 		// The code you place here will be executed every time your command is executed
 
 		// Display a message box to the user
@@ -47,9 +50,9 @@ function activate(context) {
 		createWebview(view, "preview", "Org file preview");
 		
 	});
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(previewFile);
 
-	let showAgendaCommand = vscode.commands.registerCommand('extension.vs-org-agenda.showAgenda', function () {
+	let showAgenda = vscode.commands.registerCommand('extension.vs-org-agenda.showAgenda', function () {
 		//TODO get agenda files from configuration
 		let config = vscode.workspace.getConfiguration("org-agenda")
 		let files = config.agendaFiles;
@@ -69,10 +72,9 @@ function activate(context) {
 		
 	});
 
-	context.subscriptions.push(showAgendaCommand);
+	context.subscriptions.push(showAgenda);
 
 	let showAgendaThisFile = vscode.commands.registerCommand('extension.vs-org-agenda.showAgendaThisFile', function () {
-		//TODO get agenda files from configuration
 		let content = vscode.window.activeTextEditor.document.getText();
 		content = content.replace(/\r/g,"");
 		var ast = orga.parse(content);
@@ -87,7 +89,6 @@ function activate(context) {
 	context.subscriptions.push(showAgendaThisFile);
 
 	let addFileToAgenda = vscode.commands.registerCommand('extension.vs-org-agenda.addToAgenda', function () {
-		//TODO get agenda files from configuration
 		let config = vscode.workspace.getConfiguration("org-agenda")
 		let files = config.agendaFiles;
 		let fileName = vscode.window.activeTextEditor.document.fileName.replace(/\\/g,"/");
@@ -98,6 +99,18 @@ function activate(context) {
 	});
 
 	context.subscriptions.push(addFileToAgenda);
+
+	let schedule = vscode.commands.registerCommand('extension.vs-org-agenda.schedule', function () {
+		insertWithTimestamp("SCHEDULED");
+	});
+
+	context.subscriptions.push(schedule);
+
+	let deadline = vscode.commands.registerCommand('extension.vs-org-agenda.deadline', function () {
+		insertWithTimestamp("DEADLINE");
+	});
+
+	context.subscriptions.push(deadline);
 }
 
 
@@ -114,7 +127,7 @@ function createWebview(input, id, title) {
 	  vscode.ViewColumn.Beside,
 	  {
 		// Enable scripts in the webview
-		enableScripts: true
+		enableScripts: false
 	  }
 	);
 

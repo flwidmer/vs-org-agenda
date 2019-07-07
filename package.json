@@ -14,7 +14,9 @@
 		"onCommand:extension.vs-org-agenda.showCurrentfile",
 		"onCommand:extension.vs-org-agenda.showAgenda",
 		"onCommand:extension.vs-org-agenda.showAgendaThisFile",
-		"onCommand:extension.vs-org-agenda.addToAgenda"
+		"onCommand:extension.vs-org-agenda.addToAgenda",
+		"onCommand:extension.vs-org-agenda.schedule",
+		"onCommand:extension.vs-org-agenda.deadline"
 	],
 	"main": "./dist/extension",
 	"contributes": {
@@ -36,6 +38,16 @@
 			{
 				"command": "extension.vs-org-agenda.addToAgenda",
 				"title": "org-agenda: Add current file to agenda files list",
+				"enablement": "resourceExtname == .org"
+			},
+			{
+				"command": "extension.vs-org-agenda.schedule",
+				"title": "org-agenda: insert schedule item",
+				"enablement": "resourceExtname == .org"
+			},
+			{
+				"command": "extension.vs-org-agenda.deadline",
+				"title": "org-agenda: insert deadline item",
 				"enablement": "resourceExtname == .org"
 			}
 		],

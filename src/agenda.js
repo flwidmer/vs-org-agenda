@@ -1,9 +1,7 @@
-const moment = require("moment");
-
 export {traverseSchedule, filterHeadlines, createAgendaView};
-//TODO remove this dependency
+//TODO refactor out this dependency
 import {traversePreview} from "./preview.js";
-
+import {today, parseDate, formatCanonical, formatHumanReadable, isBefore, addDays} from "./dateutil.js";
 
 var scheduleHandlers = { 
 	"section": function () {
@@ -77,7 +75,6 @@ function createAgendaView(headlines) {
 	var i;
 		var scheduled = [];
 		var deadline = [];
-		var appointements = [];
 		var dateRegex = /\d{4}-\d{1,2}-\d{1,2}/
 		let dates ={};
 		let dateList = [];
@@ -102,16 +99,16 @@ function createAgendaView(headlines) {
 			}
 			current.planning = planningItem.keyword;
 			let d = dateRegex.exec(planningItem.timestamp);
-			current.date = moment(d[0]);
-			if(current.planning == "SCHEDULED" && current.date.isBefore(today())){
-				current.date = moment().startOf("day");
+			current.date = parseDate(d[0]);
+			if(current.planning == "SCHEDULED" && isBefore(current.date, today())){
+				current.date = today();
 			}
-			if(current.planning == "DEADLINE" && current.date.isBefore(today().add(2, "days"))){
+			if(current.planning == "DEADLINE" && isBefore(current.date, addDays(today(),2))){
 				current.color = "orange";
 			}
-			if(current.planning == "DEADLINE" && current.date.isBefore(today())){
+			if(current.planning == "DEADLINE" && isBefore( current.date, today())){
 				current.color = "red";
-				current.date = moment().startOf("day");
+				current.date = today();
 			}
 			if(dates[current.date]) {
 				dates[current.date].push(current);
@@ -121,13 +118,13 @@ function createAgendaView(headlines) {
 			}
 		}
 
-		//TODO sort by date
-		dateList.sort((a,b) => a.format('YYYYMMDD') - b.format('YYYYMMDD'))
+		// sort by date
+		dateList.sort((a,b) => formatCanonical(a) - formatCanonical(b));
 
-		//TODO do html output
+		//html output (yeah it could use improvement)
 		let view = "";
 		for(i = 0; i < dateList.length; i++) {
-			view += "<h1>"+ dateList[i].format("dddd DD.MM.YYYY") + "</h1>";
+			view += "<h1>"+ formatHumanReadable(dateList[i]) + "</h1>";
 			view += "<ul>";
 			view += traverseSchedule(dates[dateList[i]]);
 			view += "</ul>";
@@ -136,6 +133,3 @@ function createAgendaView(headlines) {
 }
 
 
-function today() {
-	return moment().startOf("day");
-}
