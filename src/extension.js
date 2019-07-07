@@ -27,16 +27,6 @@ function activate(context) {
 	 * Open webview with current resource
 	 */
 	let previewFile = vscode.commands.registerCommand('extension.vs-org-agenda.showCurrentfile', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-
-		// var pathUri = vscode.Uri.file("c:/users/florian/git/notes/org/vmax.org");
-		// var test = pathUri.toString();
-		// var fileText = fs
-		// 	.readFileSync(pathUri.fsPath)
-		// 	.toString();
-
 		let content = vscode.window.activeTextEditor.document.getText();
 		
 		var ast = orga.parse(content);
@@ -50,7 +40,6 @@ function activate(context) {
 	context.subscriptions.push(previewFile);
 
 	let showAgenda = vscode.commands.registerCommand('extension.vs-org-agenda.showAgenda', function () {
-		//TODO get agenda files from configuration
 		let config = vscode.workspace.getConfiguration("org-agenda")
 		let files = config.agendaFiles;
 		var headlines = []

@@ -4,6 +4,9 @@
 	"description": "Agenda support for org mode files",
 	"version": "0.2.0",
 	"publisher": "florianwidmer",
+	"repository": {
+		"type": "git", 
+		"url": "https://github.com/flwidmer/vs-org-agenda"},
 	"engines": {
 		"vscode": "^1.35.0"
 	},
