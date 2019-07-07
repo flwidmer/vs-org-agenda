@@ -4,7 +4,7 @@ Vs-org-agenda
 ** DONE Configurable files
 ** TODO Parse several dates
 ** TODO Archiving
-** TODO insert keyword and timestamp with keystroke
+** DONE insert keyword and timestamp with keystroke
 ** TODO Configurable durations
 ** TODO Live update
 ** TODO Reload of file into same tab
