@@ -23,3 +23,6 @@ Vs-org-agenda
 Maybe better in separate ext.
 
 ** Export with pandoc
+* Extended Roadmap
+** Rename repository to vs-org-ext
+** Break into several extensions. Each encapsulating a functionality
