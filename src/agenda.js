@@ -1,46 +1,54 @@
 export {traverseSchedule, filterHeadlines, createAgendaView};
 //TODO refactor out this dependency
-import {traversePreview} from "./preview.js";
-import {today, parseDate, formatCanonical, formatHumanReadable, isBefore, addDays} from "./dateutil.js";
+import {traversePreview} from './preview.js';
+import {today, parseDate, formatCanonical, formatHumanReadable, isBefore, addDays} from './dateutil.js';
+
+var dateRegex = /\d{4}-\d{1,2}-\d{1,2}/;
+var timestampRegex = /([<\[][^\]>]*[\]>])/;
+var scheduledRegex = /SCHEDULED: ([<\[][^\]>]*[\]>])/;
+var deadLineRegex = /DEADLINE: ([<\[][^\]>]*[\]>])/;
 
 var scheduleHandlers = { 
-	"section": function () {
+	'section': function () {
 		return `
-			<div class='section'>
+			<div class="section">
 				${traversePreview(this.children)}
 			</div>`;
 	},
-	"headline": function () {
+	'headline': function () {
 		return `
 			<li>
-				${this.priority?this.priority:" "}
-				${this.keyword?`<span class='keyword ${this.keyword.toLowerCase()}'>${this.keyword}</span>`:""}
-				${this.color?`<span class='highlight-${this.color}'>`:""}
-				${traversePreview(this.children.filter(node => node.type==="text"))}
-				${this.color?`</span>`:""}
+				${this.priority?this.priority:' '}
+				${this.keyword?`<span class="keyword ${this.keyword.toLowerCase()}">${this.keyword}</span>`:''}
+				${this.color?`<span class="highlight-${this.color}">`:''}
+				${traversePreview(this.children.filter(node => node.type==='text'))}
+				${this.color?`</span>`:''}
 			</li>
-			${traversePreview(this.children.filter(node => node.type!=="text"))}`;
+			<p><i>${this.planningText}</i></p>
+			<p><i>${createBreadCrumbs(this)}</i></p>
+			${traversePreview(this.children.filter(node => node.type!=='text'))}`;
 		
 	} ,
-	"text": function() {
-		return `
-			<span>${this.value}${traversePreview(this.children)}</span>`;
+	'text': function() {
+		return '';
+		// return `
+		// 	<span>${this.value}${traversePreview(this.children)}</span>`;
 	},
-	"paragraph": function() {
+	'paragraph': function() {
 		return `
 			<p>${traversePreview(this.children)}</p>`;
 	},
-	"planning": function() {
+	'planning': function() {
 		return `
-			<p class='planning ${this.keyword.toLowerCase()}'>
-				<span class='keyword'>${this.keyword}</span><span class='timestamp'>${this.timestamp}</span>
+			<p class="planning ${this.keyword.toLowerCase()}">
+				<span class="keyword">${this.keyword}</span><span class="timestamp">${this.timestamp}</span>
 			</p>`;
 	},
-	"bold": function() {
+	'bold': function() {
 		return `
 			<b>${traversePreview(this.children)}</b>`;
 	},
-	"italic": function() {
+	'italic': function() {
 		return `
 			<i>${traversePreview(this.children)}</i>`;
 	}
@@ -50,7 +58,7 @@ var scheduleHandlers = {
 
 
 function traverseSchedule(list) {
-	let output = "";
+	let output = '';
 	var i;
 	for (i = 0; i < list.length; i++) {
 		let node = list[i];
@@ -64,7 +72,7 @@ function traverseSchedule(list) {
 function filterHeadlines(headlines, list) {
 	var i;
 	for (i = 0; i < list.length; i++) {
-		if(list[i].type=="headline") {
+		if(list[i].type=='headline') {
 			headlines.push(list[i]);
 		}
 		filterHeadlines(headlines,list[i].children);
@@ -72,44 +80,43 @@ function filterHeadlines(headlines, list) {
 }
 
 function createAgendaView(headlines) {
-	var i;
-		var scheduled = [];
-		var deadline = [];
-		var dateRegex = /\d{4}-\d{1,2}-\d{1,2}/
-		let dates ={};
-		let dateList = [];
-
+	var i,k;
 		
-		for(i=0; i < headlines.length; i++) {
-			let current = headlines[i];
-			if(current.keyword == "DONE" || current.keyword == "CANCELLED") {
-				continue;
-			}
-			let pl = current.children.filter(e => e.type =="planning");
-			if(pl.length == 0)  {
-				continue;
-			}
-			//TODO replicate items as necessary to accommodate several of them,
-			let planningItem = pl[0];
-			if(planningItem.keyword == "DEADLINE") {
-				deadline.push(current);
-			} else if (planningItem.keyword == "SCHEDULED") {
-				scheduled.push(current);
-			
-			}
+	let dates ={};
+	let dateList = [];
+
+	
+	for(i=0; i < headlines.length; i++) {
+		let current = headlines[i];
+		//TODO move to configuration, a "done" type
+		if(current.keyword == 'DONE' || current.keyword == 'CANCELLED') {
+			continue;
+		}
+		let pl = current.children.filter(e => e.type =='planning');
+		if(pl.length == 0)  {
+			continue;
+		}
+		
+		let allPlanningItems = extractPlanningitems(pl[0]);
+		for(k = 0; k < allPlanningItems.length; k++) {
+			let planningItem = allPlanningItems[k];
 			current.planning = planningItem.keyword;
 			let d = dateRegex.exec(planningItem.timestamp);
 			current.date = parseDate(d[0]);
-			if(current.planning == "SCHEDULED" && isBefore(current.date, today())){
+			if(current.planning == 'SCHEDULED' && isBefore(current.date, today())){
 				current.date = today();
+				current.planningText = `Scheduled since: ${planningItem.timestamp}`
 			}
-			if(current.planning == "DEADLINE" && isBefore(current.date, addDays(today(),2))){
-				current.color = "orange";
+			if(current.planning == 'DEADLINE' && isBefore(current.date, addDays(today(),2))){
+				current.color = 'orange';
+				current.planningText = `Due on: ${planningItem.timestamp}`
 			}
-			if(current.planning == "DEADLINE" && isBefore( current.date, today())){
-				current.color = "red";
+			if(current.planning == 'DEADLINE' && isBefore( current.date, today())){
+				current.color = 'red';
 				current.date = today();
+				current.planningText = `Overdue since: ${planningItem.timestamp}`
 			}
+			
 			if(dates[current.date]) {
 				dates[current.date].push(current);
 			} else {
@@ -117,19 +124,76 @@ function createAgendaView(headlines) {
 				dateList.push(current.date);
 			}
 		}
+	}
 
-		// sort by date
-		dateList.sort((a,b) => formatCanonical(a) - formatCanonical(b));
+	// sort by date
+	dateList.sort((a,b) => formatCanonical(a) - formatCanonical(b));
 
-		//html output (yeah it could use improvement)
-		let view = "";
-		for(i = 0; i < dateList.length; i++) {
-			view += "<h1>"+ formatHumanReadable(dateList[i]) + "</h1>";
-			view += "<ul>";
-			view += traverseSchedule(dates[dateList[i]]);
-			view += "</ul>";
-		}
-		return view;
+	//html output (yeah it could use improvement)
+	let view = '';
+	for(i = 0; i < dateList.length; i++) {
+		view += '<h1>'+ formatHumanReadable(dateList[i]) + '</h1>';
+		view += '<ul>';
+		view += traverseSchedule(dates[dateList[i]]);
+		view += '</ul>';
+	}
+	return view;
 }
 
+function extractPlanningitems(item) {
+	let additionalItems = [item];
+	let text = item.timestamp;
+	if(text.match(scheduledRegex)) {
+		let scheduled = scheduledRegex.exec(text);
+		additionalItems.push(createNode('SCHEDULED', scheduled[1], item));
+		text = text.replace(scheduledRegex,'');
+	}
+	if(text.match(deadLineRegex)) {
+		let deadline = deadLineRegex.exec(text);
+		additionalItems.push(createNode('DEADLINE', deadline[1], item));
+		text = text.replace(scheduledRegex,'');
+	}
+	let ts = timestampRegex.exec(text);
+	item.timestamp = ts[0];
+	return additionalItems;
+}
 
+function createNode(keyword, timestamp, parent) {
+	return  {	
+		type: 'planning',
+		children:[],
+		parent: parent.parent,
+		keyword: keyword,
+		timestamp: timestamp
+	};
+}
+
+function createBreadCrumbs(node) {
+	let items = [];
+	if(node) {
+		traverseUpwards(node.parent, node.level, t => items.push(t));
+	}
+	return items.reverse().join(' &gt; ');
+}
+/**
+ * Recursive to traverse headlines
+ * The trick is, that a headline is a child of a section and 
+ * the parent headline is a sibling of the container section.
+ */
+function traverseUpwards(start, level, outputFunction) {
+	if(!start || level == 1) {
+		return;
+	}
+	if(start.type == 'section') {
+		// Filter in such a way that the level is lower (higher in the hierarchy)
+		let headlines = start.children.filter(c => c.type == 'headline' && c.level < level);
+		if(headlines.length > 0) {
+			let headline = headlines[0];
+			let texts = headline.children.filter(c => c.type == 'text');
+			if(texts.length > 0) {
+				outputFunction(texts[0].value);
+			}
+		}
+	}
+	traverseUpwards(start.parent, start.level, outputFunction);
+}
