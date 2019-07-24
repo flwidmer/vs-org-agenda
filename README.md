@@ -6,11 +6,14 @@ Org Agenda functionality. Very much under development, highly experimental.
 
 For the moment there are four commands:
 - Show Agenda current file: Will show the current file in a basic agenda view.
-    - Only the first scheduling / deadline string gets parsed
 - Show Agenda: shows Agenda of all configured files
 - Add file to agenda List: Adds the current file to the agenda list
 - Show org file: Entire file is shown in a preview
     - Not all syntax is implemented
+- insert deadline and scheduled timestamp. The input accepts the follwoing formats:
+    - **+3**: in three days
+    - **10**: the next 10th of a month (either this or next month)
+    - **2019.08.01**: A date
 
 ## Release Notes
 

@@ -14,7 +14,7 @@ function parseHumanInput(input) {
     if(input.match(/\+\d+/)) {
         return today().add(input, "days");
     }
-    if (input.match(/\d+/)) {
+    if (input.length < 4 && input.match(/\d+/)) {
         let now = today();
         if(input > now.date()) {
             return now.date(input);
@@ -26,6 +26,7 @@ function parseHumanInput(input) {
     if(parse.isValid()) {
         return parse;
     }
+    
     return today();
 }
 /**

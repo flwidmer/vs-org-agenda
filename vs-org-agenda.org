@@ -2,7 +2,7 @@ Vs-org-agenda
 
 * Roadmap
 ** DONE Configurable files
-** TODO Parse several dates
+** DONE Parse several dates
 ** TODO Archiving
 ** DONE insert keyword and timestamp with keystroke
 ** TODO Configurable durations
