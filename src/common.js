@@ -16,23 +16,24 @@ function createHeader() {
 	}
 
 	span.todo{
-		background-color: #f29f97;
-		padding: 0px 4px;
+		background-color: red;
+		
 		color: #fff;
 	}
 	
 	span.wait, span.project {
-		background-color: #6AB097;
+		background-color: purple;
 	}
 	
 	span.done, span.cancelled {
-		background-color: #6ab0de;
-		padding: 0px 4px;
+		background-color: green;
 		color: #fff;
 	}
 	
 	.keyword {
 	  margin-right: 10px;
+	  border-radius: 5px;
+	  padding: 4px;
 	}
 	
 	.section-number {
