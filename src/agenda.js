@@ -2,6 +2,7 @@ export {traverseSchedule, filterHeadlines, createAgendaView};
 //TODO refactor out this dependency
 import {traversePreview} from './preview.js';
 import {today, parseDate, formatCanonical, formatHumanReadable, isBefore, addDays} from './dateutil.js';
+import { emptyIfUndefined } from './utils.js';
 
 var dateRegex = /\d{4}-\d{1,2}-\d{1,2}/;
 var timestampRegex = /([<\[][^\]>]*[\]>])/;
@@ -18,13 +19,13 @@ var scheduleHandlers = {
 	'headline': function () {
 		return `
 			<li>
-				${this.priority?this.priority:' '}
+				${emptyIfUndefined(this.priority)}
 				${this.keyword?`<span class="keyword ${this.keyword.toLowerCase()}">${this.keyword}</span>`:''}
 				${this.color?`<span class="highlight-${this.color}">`:''}
 				${traversePreview(this.children.filter(node => node.type==='text'))}
-				${this.color?`</span>`:''}
+				${this.color?'</span>':''}
 			</li>
-			<p><i>${this.planningText}</i></p>
+			<p><i>${emptyIfUndefined(this.planningText)}</i></p>
 			<p><i>${createBreadCrumbs(this)}</i></p>
 			${traversePreview(this.children.filter(node => node.type!=='text'))}`;
 		

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-export {getCursorPosition,getActiveTextEditor,getLine}
+export {getCursorPosition,getActiveTextEditor,getLine,emptyIfUndefined}
 
 
 function getCursorPosition() {
@@ -16,3 +16,6 @@ function getLine() {
     return getActiveTextEditor().lineAt(getCursorPosition());
 }
 
+function emptyIfUndefined(text) {
+    return text?text:'';
+}
