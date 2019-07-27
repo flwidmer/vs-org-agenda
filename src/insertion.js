@@ -7,7 +7,7 @@ export function insertWithTimestamp(keyword) {
 			return;
 		}
 		let pos = editor.selection.active;
-		let opts = { prompt: "Enter schedule date"};
+		let opts = { prompt: 'Enter schedule date'};
 		vscode.window.showInputBox(opts).then(function (scheduleOn) {
 			if(scheduleOn) {
 				let text= timestamp(parseHumanInput(scheduleOn));
@@ -17,3 +17,4 @@ export function insertWithTimestamp(keyword) {
 			}
 		});
 }
+
