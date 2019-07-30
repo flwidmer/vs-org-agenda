@@ -5,8 +5,9 @@
 	"version": "0.2.0",
 	"publisher": "florianwidmer",
 	"repository": {
-		"type": "git", 
-		"url": "https://github.com/flwidmer/vs-org-agenda"},
+		"type": "git",
+		"url": "https://github.com/flwidmer/vs-org-agenda"
+	},
 	"engines": {
 		"vscode": "^1.35.0"
 	},
@@ -19,10 +20,33 @@
 		"onCommand:extension.vs-org-agenda.showAgendaThisFile",
 		"onCommand:extension.vs-org-agenda.addToAgenda",
 		"onCommand:extension.vs-org-agenda.schedule",
-		"onCommand:extension.vs-org-agenda.deadline"
+		"onCommand:extension.vs-org-agenda.deadline",
+		"onCommand:extension.vs-org-agenda.close"
 	],
 	"main": "./dist/extension",
 	"contributes": {
+		"keybindings": [
+			{
+				"command": "extension.vs-org-agenda.showCurrentfile",
+				"key": "ctrl+alt+o ctrl+e"
+			},
+			{
+				"command": "extension.vs-org-agenda.showAgenda",
+				"key": "ctrl+alt+o ctrl+a"
+			},
+			{
+				"command": "extension.vs-org-agenda.schedule",
+				"key": "ctrl+alt+o ctrl+s"
+			},
+			{
+				"command": "extension.vs-org-agenda.deadline",
+				"key": "ctrl+alt+o ctrl+d"
+			},
+			{
+				"command": "extension.vs-org-agenda.close",
+				"key": "ctrl+alt+o ctrl+q"
+			}
+		],
 		"commands": [
 			{
 				"command": "extension.vs-org-agenda.showCurrentfile",
@@ -52,6 +76,11 @@
 				"command": "extension.vs-org-agenda.deadline",
 				"title": "org-agenda: insert deadline item",
 				"enablement": "resourceExtname == .org"
+			},
+			{
+				"command": "extension.vs-org-agenda.close",
+				"title": "org-agenda: close TODO item",
+				"enablement": "resourceExtname == .org"
 			}
 		],
 		"configuration": {
@@ -69,7 +98,7 @@
 		"vscode:prepublish": "webpack --mode production",
 		"webpack": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
-		"test-compile": "tsc -p ./",
+		"test-compile": "webpack --mode development",
 		"lint": "eslint -p ./"
 	},
 	"devDependencies": {
