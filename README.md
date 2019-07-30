@@ -14,7 +14,7 @@ For the moment there are four commands:
     - **+3**: in three days
     - **10**: the next 10th of a month (either this or next month)
     - **2019.08.01**: A date
-
+- close todo items
 ## Release Notes
 
 ### 0.2.0 

@@ -8,7 +8,7 @@ Vs-org-agenda
 ** TODO Configurable durations
 ** TODO Live update
 ** TODO Reload of file into same tab
-** TODO Keystroke proposals
+** DONE Keystroke proposals
 ** DONE Better titles
 ** DONE use template strings for output generation
 ** DONE refactoring into modules
