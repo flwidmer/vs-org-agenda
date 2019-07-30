@@ -1,7 +1,9 @@
 import {traversePreview} from "./preview.js";
 import {createAgendaView, filterHeadlines} from "./agenda.js";
 import {createHeader} from "./common.js";
-import { insertWithTimestamp } from "./insertion.js";
+import { insertWithUserTimestamp, insertTimestampedKeyword } from "./insertion.js";
+import { getHeadlinePosition, changeKeyword } from "./headlines";
+import { today } from "./dateutil.js";
 
 export{activate, deactivate};
 
@@ -87,16 +89,25 @@ function activate(context) {
 	context.subscriptions.push(addFileToAgenda);
 
 	let schedule = vscode.commands.registerCommand('extension.vs-org-agenda.schedule', function () {
-		insertWithTimestamp("SCHEDULED");
+		insertWithUserTimestamp("SCHEDULED");
 	});
 
 	context.subscriptions.push(schedule);
 
 	let deadline = vscode.commands.registerCommand('extension.vs-org-agenda.deadline', function () {
-		insertWithTimestamp("DEADLINE");
+		insertWithUserTimestamp("DEADLINE");
 	});
-
 	context.subscriptions.push(deadline);
+
+	let close = vscode.commands.registerCommand('extension.vs-org-agenda.close', function() {
+		//TODO guard if is headline, advance to done and move cursor to next line and close
+		let lineNumber = getHeadlinePosition();
+		changeKeyword(lineNumber, 'DONE')
+			.then(() =>insertTimestampedKeyword(lineNumber + 1, 'CLOSED', today()));
+		// insertWithTimestamp('CLOSED');
+	});
+	context.subscriptions.push(close);
+	//TODO register close in package.json
 }
 
 

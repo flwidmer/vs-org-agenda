@@ -3,11 +3,8 @@ export {traverseSchedule, filterHeadlines, createAgendaView};
 import {traversePreview} from './preview.js';
 import {today, parseDate, formatCanonical, formatHumanReadable, isBefore, addDays} from './dateutil.js';
 import { emptyIfUndefined } from './utils.js';
+import { DATE_REGEX, SCHEDULED_REGEX, DEADLINE_REGEX, TIMESTAMP_REGEX } from './regexes.js';
 
-var dateRegex = /\d{4}-\d{1,2}-\d{1,2}/;
-var timestampRegex = /([<\[][^\]>]*[\]>])/;
-var scheduledRegex = /SCHEDULED: ([<\[][^\]>]*[\]>])/;
-var deadLineRegex = /DEADLINE: ([<\[][^\]>]*[\]>])/;
 
 var scheduleHandlers = { 
 	'section': function () {
@@ -102,7 +99,7 @@ function createAgendaView(headlines) {
 		for(k = 0; k < allPlanningItems.length; k++) {
 			let planningItem = allPlanningItems[k];
 			current.planning = planningItem.keyword;
-			let d = dateRegex.exec(planningItem.timestamp);
+			let d = DATE_REGEX.exec(planningItem.timestamp);
 			current.date = parseDate(d[0]);
 			if(current.planning == 'SCHEDULED' && isBefore(current.date, today())){
 				current.date = today();
@@ -144,17 +141,17 @@ function createAgendaView(headlines) {
 function extractPlanningitems(item) {
 	let additionalItems = [item];
 	let text = item.timestamp;
-	if(text.match(scheduledRegex)) {
-		let scheduled = scheduledRegex.exec(text);
+	if(text.match(SCHEDULED_REGEX)) {
+		let scheduled = SCHEDULED_REGEX.exec(text);
 		additionalItems.push(createNode('SCHEDULED', scheduled[1], item));
-		text = text.replace(scheduledRegex,'');
+		text = text.replace(SCHEDULED_REGEX,'');
 	}
-	if(text.match(deadLineRegex)) {
-		let deadline = deadLineRegex.exec(text);
+	if(text.match(DEADLINE_REGEX)) {
+		let deadline = DEADLINE_REGEX.exec(text);
 		additionalItems.push(createNode('DEADLINE', deadline[1], item));
-		text = text.replace(scheduledRegex,'');
+		text = text.replace(SCHEDULED_REGEX,'');
 	}
-	let ts = timestampRegex.exec(text);
+	let ts = TIMESTAMP_REGEX.exec(text);
 	item.timestamp = ts[0];
 	return additionalItems;
 }
