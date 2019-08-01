@@ -103,7 +103,7 @@ function activate(context) {
 		//TODO guard if is headline, advance to done and move cursor to next line and close
 		let lineNumber = getHeadlinePosition();
 		changeKeyword(lineNumber, 'DONE')
-			.then(() =>insertTimestampedKeyword(lineNumber + 1, 'CLOSED', today()));
+			.then(() =>insertTimestampedKeyword(lineNumber + 1, 'CLOSED', today(), true));
 		// insertWithTimestamp('CLOSED');
 	});
 	context.subscriptions.push(close);

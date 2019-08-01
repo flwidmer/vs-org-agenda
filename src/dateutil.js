@@ -50,8 +50,8 @@ function formatHumanReadable(momentDate) {
     return momentDate.format(HuMAN_READABLE_DATE_FORMAT);
 }
 
-function timestamp(input) {
-    return `<${input.format(TIMESTAMP_DATE_FORMAT)}>`;
+function timestamp(input, ignoreInAgenda) {
+    return `${ignoreInAgenda?'[':'<'}${input.format(TIMESTAMP_DATE_FORMAT)}${ignoreInAgenda?']':'>'}`;
 }
 
 function isBefore(momentDateFirst, momentDateSecond) {
