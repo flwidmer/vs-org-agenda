@@ -12,11 +12,17 @@ Vs-org-agenda
 ** DONE Better titles
 ** DONE use template strings for output generation
 ** DONE refactoring into modules
-
+** TODO Closing of tasks with metadata and keystroke
 * Backlog
 ** Better CSS
 ** Something better than webview
-** Tests 
+** Tests
 ** webview with foldable?
 ** Tables with sums
+
 Maybe better in separate ext.
+
+** Export with pandoc
+* Extended Roadmap
+** Rename repository to vs-org-ext
+** Break into several extensions. Each encapsulating a functionality
