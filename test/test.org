@@ -1,0 +1,46 @@
+-*- mode: org; -*-
+
+
+#+TODO: TODO NEXT WAIT PROJECT SOMEDAY DONE CANCELLED
+#+ARCHIVE: %s_done::
+#+TITLE: BSI Tasklist
+
+* test 1
+SCHEDULED: <2019-8-15 Mon> DEADLINE: <2019-08-19 Thu>
+something
+
+** PROJECT Basiskurs Juni
+SCHEDULED: <2019-07-15 Mon>
+:DRAWER:
+something inside
+:END:
+
+** DONE test 2
+DEADLINE: [2019-6-18 Tue]
+
+*** DONE  Deeeep
+CLOSED: <2019-07-30 Tue> DEADLINE: <2019-08-15 Thu>
+
+testtest
+- [ ] asdasd
+- [ ] asdasdasss
+- [x] aaaa
+
+* TODO test 3
+CLOSED: <2019-07-30 Tue> CLOSED: <2019-07-29 Mon>     <2019-6-15 Sat>
+    some text
+    #+BEGIN_SRC javascript
+
+    test
+
+    #+END_SRC
+
+* TODO TEST 4
+    DEADLINE: [2019-6-15 Mon] SCHEDULED: [2019-6-15 Sat]
+
+** TODO TEST 5
+    SCHEDULED: [2019-6-15 Sat]
+| 123    | 12    |         | 1231   |       |
+| ------ | ----- | ------- | ------ | ----- |
+| 123123 | sadda | dasdasd | asdasd | adasd |
+| ddd    | dd    | erttz   | qqq    | qq    |
