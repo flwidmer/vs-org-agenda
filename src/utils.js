@@ -43,3 +43,7 @@ function isEmpty(text) {
         return false;
     }
 }
+
+export function push(stack, items) {
+	Array.prototype.push.apply(stack, items);
+}

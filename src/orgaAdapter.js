@@ -1,4 +1,4 @@
-const orga = require("orga");
+import * as orga from 'orga';
 
 export function parseOrgaAst(input) {
     let content = input.replace(/\r/g, '');

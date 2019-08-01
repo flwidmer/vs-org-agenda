@@ -1,4 +1,4 @@
-import { leftPadIfDefined, applyIfDefined } from "./utils";
+import * as util from "./utils";
 
 const orgHandlers = {
     'root': function () {
@@ -8,7 +8,7 @@ const orgHandlers = {
         return `${renderOrg(this.children)}`;
     },
     'headline': function () {
-        let r = `${createLevel(this.level)}${leftPadIfDefined(this.keyword)}${applyIfDefined(this.tags, t => t.map(e => ':' + e + ':').join(' '))}${applyIfDefined(this.priority, t => ` #${t}`)} ${renderOrg(this.children.filter(node => node.type === 'text'))}`;
+        let r = `${createLevel(this.level)}${util.leftPadIfDefined(this.keyword)}${util.applyIfDefined(this.tags, t => t.map(e => ':' + e + ':').join(' '))}${util.applyIfDefined(this.priority, t => ` #${t}`)} ${renderOrg(this.children.filter(node => node.type === 'text'))}`;
         return r;
     },
     'text': function () {

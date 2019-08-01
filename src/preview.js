@@ -1,6 +1,5 @@
-export {traversePreview};
 
-function traversePreview(list) {
+export function traversePreview(list) {
 	let output = '';
 	var i;
 	for (i = 0; i < list.length; i++) {

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { parseHumanInput, timestamp } from './dateutil';
-import { isSchedulingStatement, getCursorPosition } from './utils';
+import * as dateutil from './dateutil';
+import * as util from './utils';
 /**
  * USed to insert SCHEDULED and DEADLINE keywords
  * @param {String} keyword 
@@ -11,10 +11,10 @@ export function insertWithUserTimestamp(keyword) {
 		return;
 	}
 	let opts = { prompt: 'Enter schedule date' };
-	let lineNumber = getCursorPosition().line;
+	let lineNumber = util.getCursorPosition().line;
 	return vscode.window.showInputBox(opts).then(function (scheduleOn) {
 		if (scheduleOn) {
-			return parseHumanInput(scheduleOn);
+			return dateutil.parseHumanInput(scheduleOn);
 		}
 	}).then(d => {
 		if(d) {
@@ -31,9 +31,9 @@ export function insertWithUserTimestamp(keyword) {
  */
 export function insertTimestampedKeyword(lineNumber, keyword, momentDate, ignoreInAgenda=false) {
 	let editor = vscode.window.activeTextEditor;
-	let insertNewLine = !isSchedulingStatement(lineNumber);
+	let insertNewLine = !util.isSchedulingStatement(lineNumber);
 	//TODO Append at end of line
-	let toInsert = `${keyword}: ${timestamp(momentDate,ignoreInAgenda)}${insertNewLine?'\n':' '}`;
+	let toInsert = `${keyword}: ${dateutil.timestamp(momentDate,ignoreInAgenda)}${insertNewLine?'\n':' '}`;
 	let insertionPosition = new vscode.Position(lineNumber, 0);
 	return editor.edit(edit => {
 		edit.insert(insertionPosition, toInsert);
