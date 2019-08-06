@@ -21,7 +21,7 @@
 		"onCommand:extension.vs-org-agenda.addToAgenda",
 		"onCommand:extension.vs-org-agenda.schedule",
 		"onCommand:extension.vs-org-agenda.deadline",
-		"onCommand:extension.vs-org-agenda.close"
+		"onCommand:extension.vs-org-agenda.changeState"
 	],
 	"main": "./dist/extension",
 	"contributes": {
@@ -43,7 +43,7 @@
 				"key": "ctrl+alt+o ctrl+d"
 			},
 			{
-				"command": "extension.vs-org-agenda.close",
+				"command": "extension.vs-org-agenda.changeState",
 				"key": "ctrl+alt+o ctrl+q"
 			}
 		],
@@ -78,8 +78,8 @@
 				"enablement": "resourceExtname == .org"
 			},
 			{
-				"command": "extension.vs-org-agenda.close",
-				"title": "org-agenda: close TODO item",
+				"command": "extension.vs-org-agenda.changeState",
+				"title": "org-agenda: change stete of item",
 				"enablement": "resourceExtname == .org"
 			}
 		],
@@ -90,6 +90,17 @@
 					"type": "array",
 					"default": [],
 					"description": "List of files to use for agenda. Typically you want this per workspace"
+				},
+				"org-agenda.stateKeywords": {
+					"type": "array",
+					"default": ["TODO", "DONE"],
+					"description": "List of keywords to use to designate the state of headline items",
+					"title": "Headline States"
+				},
+				"org-agenda.doneStates": {
+					"type": "array",
+					"default": ["DONE", "CANCELLED"],
+					"description": "States considered closed",
 				}
 			}
 		}

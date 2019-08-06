@@ -41,8 +41,8 @@ function activate(context) {
 	let deadline = vscode.commands.registerCommand('extension.vs-org-agenda.deadline', commands.commandDeadline);
 	context.subscriptions.push(deadline);
 
-	let close = vscode.commands.registerCommand('extension.vs-org-agenda.close', commands.commandCloseTodo);
-	context.subscriptions.push(close);
+	let changeState = vscode.commands.registerCommand('extension.vs-org-agenda.changeState', commands.commandChangeTodoState);
+	context.subscriptions.push(changeState);
 }
 
 

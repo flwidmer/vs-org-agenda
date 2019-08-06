@@ -22,7 +22,7 @@ export function commandPreviewFile() {
 }
 
 export function commandShowAgenda() {
-    let config = vscode.workspace.getConfiguration('org-agenda')
+    let config = getConfiguration()
     let files = config.agendaFiles;
     var headlines = []
     for (let i =  0; i < files.length; i++) {
@@ -38,6 +38,10 @@ export function commandShowAgenda() {
     let view = createAgendaView(headlines);
     createWebview(view, 'agenda', 'Agenda view');
     
+}
+
+function getConfiguration() {
+    return vscode.workspace.getConfiguration('org-agenda');
 }
 
 export function commandShowAgendaThisFile() {
@@ -70,10 +74,22 @@ export function commandDeadline() {
     insertWithUserTimestamp('DEADLINE');
 }
 
-export function commandCloseTodo() {
-    //TODO guard if is headline, advance to done and move cursor to next line and close
-    let lineNumber = getHeadlinePosition();
-    changeKeyword(lineNumber, 'DONE')
-        .then(() =>insertTimestampedKeyword(lineNumber + 1, 'CLOSED', today(), true));
-    // insertWithTimestamp('CLOSED');
+export function commandChangeTodoState() {
+    let opts = {
+        prompt: 'Please select state',
+        canPickMany: false
+    }
+    let availableStates = getConfiguration().stateKeywords;
+    let doneStates = getConfiguration().doneStates;
+    return vscode.window.showQuickPick(availableStates, opts).then(function (pickedItem) {
+		if (pickedItem) {
+			let lineNumber = getHeadlinePosition();
+            return changeKeyword(lineNumber, pickedItem)
+                .then(() =>{
+                    if(doneStates.some(s => s === pickedItem)) {
+                        insertTimestampedKeyword(lineNumber + 1, 'CLOSED', today(), true);
+                    }
+                });
+		}
+	});
 }
