@@ -77,7 +77,7 @@ function createHeader() {
 		font-weight:bold;
 		border-top:3px solid #e1e4e5;
 		border-bottom:1px solid #e1e4e5;
-	}
+	}	
 	
 	table caption{
 		color:#000;

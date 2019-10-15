@@ -43,6 +43,9 @@ function activate(context) {
 
 	let changeState = vscode.commands.registerCommand('extension.vs-org-agenda.changeState', commands.commandChangeTodoState);
 	context.subscriptions.push(changeState);
+
+	let archiveSubtree = vscode.commands.registerCommand('extension.vs-org-agenda.archiveSubtree', commands.commandArchiveSubtree);
+	context.subscriptions.push(archiveSubtree);
 }
 
 

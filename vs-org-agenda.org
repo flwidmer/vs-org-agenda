@@ -3,7 +3,7 @@ Vs-org-agenda
 * Roadmap
 ** DONE Configurable files
 ** DONE Parse several dates
-** TODO Archiving
+** DONE Archiving
 ** DONE insert keyword and timestamp with keystroke
 ** TODO Configurable durations
 ** TODO Live update
@@ -23,6 +23,8 @@ Vs-org-agenda
 Maybe better in separate ext.
 
 ** Export with pandoc
+*** Export of selection
+*** use installed pandoc, simply give path
 * Extended Roadmap
 ** Rename repository to vs-org-ext
 ** Break into several extensions. Each encapsulating a functionality

@@ -18,6 +18,14 @@ export function getActiveTextEditor() {
     return vscode.window.activeTextEditor.document;
 }
 
+export function createTextEditor() {
+    
+}
+
+export function getActiveFileName() {
+    return vscode.window.activeTextEditor.document.uri.fsPath;
+}
+
 export function getLine() {
     return getActiveTextEditor().lineAt(getCursorPosition());
 }
@@ -46,4 +54,13 @@ function isEmpty(text) {
 
 export function push(stack, items) {
 	Array.prototype.push.apply(stack, items);
+}
+
+
+/**
+ * 
+ * @param {string} content 
+ */
+export function splitIntoLines(content) {
+    return content.split('\n');
 }

@@ -1,13 +1,14 @@
 import {traversePreview} from './preview.js';
 import {createAgendaView, filterHeadlines} from './agenda.js';
 import { insertWithUserTimestamp, insertTimestampedKeyword } from './insertion.js';
-import { getHeadlinePosition, changeKeyword } from './headlines';
+import { getHeadlinePosition, changeKeyword, compileUpwardPath, getSubtreeRange } from './headlines';
 import { today } from './dateutil.js';
 import { createWebview } from './common.js';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as orga from 'orga';
-import { push } from './utils.js';
+import { push, getCursorPosition, getActiveFileName, getActiveTextEditor } from './utils.js';
+import { archive } from './refile.js';
 
 export function commandPreviewFile() {
     let content = vscode.window.activeTextEditor.document.getText();
@@ -92,4 +93,27 @@ export function commandChangeTodoState() {
                 });
 		}
 	});
+}
+
+export function commandArchiveSubtree() {
+    let suffix = getConfiguration().archiveSuffix;
+    let targetFile = getActiveFileName() + suffix;
+    
+    //Calculate subtree range
+    let lineNumber = getCursorPosition().line;
+    let originalPath = compileUpwardPath(lineNumber);
+    //extract subtree range
+    let subtreeRange = getSubtreeRange(lineNumber);
+    let sourceEditor = vscode.window.activeTextEditor;
+    let content = sourceEditor.document.getText(subtreeRange);
+    //insert into target file
+    archive(content, targetFile, originalPath, sourceEditor.document.uri.fsPath);
+    //remove subtree range from editor
+    return sourceEditor.edit(edit => {
+        edit.delete(subtreeRange);
+    });
+}
+
+export function commandRefile() {
+    //TODO FWI implement, add to extension.js, add to package.js
 }

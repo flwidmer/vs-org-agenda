@@ -6,8 +6,14 @@ const CANONICAL_DATE_FORMAT = 'YYYYMMDD';
 const HuMAN_READABLE_DATE_FORMAT = 'dddd DD.MM.YYYY';
 const TIMESTAMP_DATE_FORMAT = 'YYYY-MM-DD ddd';
 
+const TIMESTAMP_FORMAT = TIMESTAMP_DATE_FORMAT + ' hh24:mm:ss';
+
 export function today() {
 	return moment().startOf('day');
+}
+
+export function timestampNow() {
+    return moment().format(TIMESTAMP_FORMAT);
 }
 
 export function parseDate(input) {

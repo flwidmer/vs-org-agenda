@@ -17,6 +17,10 @@ For the moment there are four commands:
 - close todo items
 ## Release Notes
 
+### 0.3.0
+
+
+
 ### 0.2.0 
 - Agenda View
 
