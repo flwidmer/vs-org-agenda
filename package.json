@@ -2,7 +2,7 @@
 	"name": "vs-org-agenda",
 	"displayName": "vs-org-agenda",
 	"description": "Agenda support for org mode files",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"publisher": "florianwidmer",
 	"repository": {
 		"type": "git",
