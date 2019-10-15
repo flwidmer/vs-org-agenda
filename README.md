@@ -19,6 +19,7 @@ For the moment there are four commands:
 
 ### 0.3.0
 
+- Archiving
 
 
 ### 0.2.0 
