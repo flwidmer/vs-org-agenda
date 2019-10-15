@@ -21,7 +21,8 @@
 		"onCommand:extension.vs-org-agenda.addToAgenda",
 		"onCommand:extension.vs-org-agenda.schedule",
 		"onCommand:extension.vs-org-agenda.deadline",
-		"onCommand:extension.vs-org-agenda.changeState"
+		"onCommand:extension.vs-org-agenda.changeState",
+		"onCommand:extension.vs-org-agenda.archiveSubtree"
 	],
 	"main": "./dist/extension",
 	"contributes": {
@@ -45,6 +46,10 @@
 			{
 				"command": "extension.vs-org-agenda.changeState",
 				"key": "ctrl+alt+o ctrl+q"
+			},
+			{
+				"command": "extension.vs-org-agenda.archiveSubtree",
+				"key": "ctrl+alt+o ctrl+$"
 			}
 		],
 		"commands": [
@@ -81,6 +86,11 @@
 				"command": "extension.vs-org-agenda.changeState",
 				"title": "org-agenda: change stete of item",
 				"enablement": "resourceExtname == .org"
+			},
+			{
+				"command": "extension.vs-org-agenda.archiveSubtree",
+				"title": "org-agenda: archive a subtree",
+				"enablement": "resourceExtname == .org"
 			}
 		],
 		"configuration": {
@@ -93,14 +103,26 @@
 				},
 				"org-agenda.stateKeywords": {
 					"type": "array",
-					"default": ["TODO", "DONE"],
+					"default": [
+						"TODO",
+						"DONE"
+					],
 					"description": "List of keywords to use to designate the state of headline items",
 					"title": "Headline States"
 				},
 				"org-agenda.doneStates": {
 					"type": "array",
-					"default": ["DONE", "CANCELLED"],
-					"description": "States considered closed",
+					"default": [
+						"DONE",
+						"CANCELLED"
+					],
+					"description": "States considered closed"
+				},
+				"org-agenda.archiveSuffix": {
+					"type": "string",
+					"default": "_done",
+					"description": "Suffix to be used for archiving. If there is no file with that suffix in the path of the current file, one will be created",
+					"title": "Archive sufix"
 				}
 			}
 		}
@@ -110,7 +132,8 @@
 		"webpack": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
 		"test-compile": "webpack --mode development",
-		"lint": "eslint -p ./"
+		"lint": "eslint -p ./",
+		"test": "mocha 'test/*.test.js'"
 	},
 	"devDependencies": {
 		"@types/mocha": "^2.2.42",
@@ -119,7 +142,8 @@
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28",
 		"webpack": "^4.35.0",
-		"webpack-cli": "^3.3.4"
+		"webpack-cli": "^3.3.4",
+		"mocha": "^4.1.0"
 	},
 	"dependencies": {
 		"diff": ">=3.5.0",
